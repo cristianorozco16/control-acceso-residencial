@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block titulo %}Control de Acceso Residencial{% endblock %}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          // Paleta inspirada en TiendaTecno (Azul Noche / Pizarra / Cian)
+          navy: { 
+            950: '#0f172a', /* Fondo principal ultra oscuro */
+            900: '#1e293b', /* Tarjetas / Contenedores */
+            800: '#334155', /* Bordes y elementos hover */
+          },
+          paper: '#0f172a',   /* Mantiene coherencia de fondo oscuro */
+          teal: { 
+            DEFAULT: '#06b6d4', /* Cian vibrante como color primario */
+            dark: '#0891b2' 
+          },
+          accent: '#10b981',    /* Esmeralda para detalles/éxito */
+        },
+        fontFamily: {
+          display: ['Plus Jakarta Sans', 'sans-serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  /* Personalización adicional para inputs en fondo oscuro */
+  input, select {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+  }
+  input::placeholder {
+    color: #64748b !important;
+  }
+  input:focus, select:focus {
+    border-color: #06b6d4 !important;
+  }
+  /* Estilos para tablas e historial */
+  .bg-white {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+  }
+  .bg-slate-50 {
+    background-color: #0f172a !important;
+    color: #94a3b8 !important;
+  }
+  .text-slate-900, .text-navy-950, .text-slate-700, .text-slate-600 {
+    color: #f8fafc !important;
+  }
+  .text-slate-500, .text-slate-400 {
+    color: #94a3b8 !important;
+  }
+  .border-slate-200, .border-slate-100, .border-slate-300 {
+    border-color: #334155 !important;
+  }
+  .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #334155 !important;
+  }
+</style>
+</head>
+<body class="bg-navy-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col">
+
+  <!-- Header Superior estilo Glassmorphism -->
+  <header class="bg-navy-900/80 backdrop-blur-md border-b border-navy-800 text-white sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5 font-display font-semibold tracking-tight text-base sm:text-lg">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-teal text-navy-950 font-bold text-sm shadow-md">
+          <i class="fa-solid fa-shield-halved"></i>
+        </span>
+        <span class="hidden xs:inline">Control de Acceso Residencial</span>
+        <span class="xs:hidden">Control Acceso</span>
+      </a>
+      <nav class="flex gap-2 text-sm font-medium">
+        <a href="/" class="px-3.5 py-2 rounded-lg border border-transparent hover:bg-navy-800 transition {% block nav_registro %}{% endblock %}">
+          <i class="fa-solid fa-user-plus mr-1.5 text-teal"></i>Registro
+        </a>
+        <a href="/historial" class="px-3.5 py-2 rounded-lg border border-transparent hover:bg-navy-800 transition {% block nav_historial %}{% endblock %}">
+          <i class="fa-solid fa-list mr-1.5 text-teal"></i>Historial
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-slate-400 py-6 px-4 border-t border-navy-800 bg-navy-900/50">
+    Datos personales tratados conforme a la Ley 1581 de 2012 (Habeas Data) · Colombia
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

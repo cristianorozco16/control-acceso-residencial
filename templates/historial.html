@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block titulo %}Historial de habitantes · Control de Acceso Residencial{% endblock %}
+{% block nav_historial %}bg-navy-800{% endblock %}
+
+{% block contenido %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div>
+    <h1 class="font-display text-2xl font-semibold text-navy-950">Habitantes registrados</h1>
+    <p class="text-sm text-slate-500 mt-1">{{ habitantes|length }} registro(s) en el sistema</p>
+  </div>
+  <div class="flex gap-2">
+    <a href="/api/exportar-hikvision"
+       class="inline-flex items-center gap-2 rounded-lg bg-navy-950 text-white text-sm font-medium px-4 py-2.5 hover:bg-navy-800 transition whitespace-nowrap">
+      Exportar para Hikvision
+    </a>
+    <a href="/" class="inline-flex items-center gap-2 rounded-lg bg-teal text-white text-sm font-medium px-4 py-2.5 hover:bg-teal-dark transition whitespace-nowrap">
+      + Nuevo registro
+    </a>
+  </div>
+</div>
+
+<div class="mb-4">
+  <input id="buscador" type="text" placeholder="Buscar por nombre, documento, torre o apartamento..."
+    class="w-full sm:max-w-sm rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent">
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+      <tr>
+        <th class="text-left font-medium px-4 py-3">Foto</th>
+        <th class="text-left font-medium px-4 py-3">Nombre</th>
+        <th class="text-left font-medium px-4 py-3">Documento</th>
+        <th class="text-left font-medium px-4 py-3">Torre / Apto</th>
+        <th class="text-left font-medium px-4 py-3">Tipo</th>
+        <th class="text-left font-medium px-4 py-3">Registrado</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla" class="divide-y divide-slate-100">
+      {% for h in habitantes %}
+      <tr>
+        <td class="px-4 py-2.5"><img src="{{ h.foto_path }}" class="h-10 w-9 object-cover rounded-md ring-1 ring-teal/40"></td>
+        <td class="px-4 py-2.5 font-medium text-navy-950 whitespace-nowrap">{{ h.nombre_completo }}</td>
+        <td class="px-4 py-2.5 font-mono tabular-nums text-slate-600 whitespace-nowrap">{{ h.tipo_documento }} {{ h.documento }}</td>
+        <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">{{ h.torre_bloque }} {{ h.apartamento }}</td>
+        <td class="px-4 py-2.5 text-slate-600 capitalize whitespace-nowrap">{{ h.tipo_habitante.replace('_', ' ') }}</td>
+        <td class="px-4 py-2.5 text-slate-500 whitespace-nowrap">{{ h.fecha_registro.strftime('%Y-%m-%d %H:%M') if h.fecha_registro else '' }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="px-4 py-10 text-center text-slate-400">Aún no hay habitantes registrados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const buscador = document.getElementById('buscador');
+  const cuerpoTabla = document.getElementById('cuerpoTabla');
+  let temporizador = null;
+
+  // "Debounce": espera 250ms después de que el usuario deja de escribir
+  // antes de consultar el backend, para no disparar una petición por
+  // cada tecla presionada.
+  buscador.addEventListener('input', () => {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(buscar, 250);
+  });
+
+  // Llama a GET /api/habitantes?q=... (definido en main.py) y vuelve a
+  // pintar la tabla con los resultados, sin recargar la página.
+  async function buscar() {
+    const q = buscador.value.trim();
+    const resp = await fetch(`/api/habitantes?q=${encodeURIComponent(q)}`);
+    const datos = await resp.json();
+    renderizarTabla(datos);
+  }
+
+  // Reconstruye el <tbody> de la tabla a partir del JSON recibido.
+  function renderizarTabla(habitantes) {
+    if (habitantes.length === 0) {
+      cuerpoTabla.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">No se encontraron resultados.</td></tr>`;
+      return;
+    }
+    cuerpoTabla.innerHTML = habitantes.map((h) => `
+      <tr>
+        <td class="px-4 py-2.5"><img src="${h.foto_path}" class="h-10 w-9 object-cover rounded-md ring-1 ring-teal/40"></td>
+        <td class="px-4 py-2.5 font-medium text-navy-950 whitespace-nowrap">${escapeHtml(h.nombre_completo)}</td>
+        <td class="px-4 py-2.5 font-mono tabular-nums text-slate-600 whitespace-nowrap">${escapeHtml(h.tipo_documento)} ${escapeHtml(h.documento)}</td>
+        <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">${escapeHtml(h.torre_bloque || '')} ${escapeHtml(h.apartamento)}</td>
+        <td class="px-4 py-2.5 text-slate-600 capitalize whitespace-nowrap">${escapeHtml((h.tipo_habitante || '').replace('_', ' '))}</td>
+        <td class="px-4 py-2.5 text-slate-500 whitespace-nowrap">${h.fecha_registro ? h.fecha_registro.replace('T', ' ').slice(0, 16) : ''}</td>
+      </tr>
+    `).join('');
+  }
+
+  // Evita inyección de HTML/XSS al insertar texto dinámico con innerHTML:
+  // usa el propio navegador (vía textContent) para escapar caracteres
+  // especiales como < > & antes de insertarlos en la tabla.
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+</script>
+{% endblock %}
