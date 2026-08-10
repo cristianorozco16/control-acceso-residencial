@@ -4,142 +4,295 @@
 
 {% block contenido %}
 <style>
+  :root {
+    --bg-card: #1e293b;
+    --bg-input: #0f172a;
+    --border-color: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary: #06b6d4;
+    --primary-hover: #0891b2;
+    --secondary: #334155;
+    --secondary-hover: #475569;
+    --success-bg: #064e3b;
+    --success-text: #34d399;
+    --error-bg: #7f1d1d;
+    --error-text: #fca5a5;
+    --radius: 0.75rem;
+    --transition: all 0.3s ease;
+  }
+
+  .registro-wrapper {
+    max-width: 600px;
+    margin: 2rem auto;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
   .card-container {
-    background-color: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    color: #f8fafc;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 2rem;
+    color: var(--text-main);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    transition: var(--transition);
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
     margin-bottom: 1.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
   }
-  .btn-primary {
-    background-color: #06b6d4;
-    color: #0f172a;
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    width: 100%;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: background-color 0.2s;
-  }
-  .btn-primary:hover {
-    background-color: #0891b2;
-  }
-  .btn-primary:disabled {
-    background-color: #334155;
-    color: #64748b;
-    cursor: not-allowed;
-  }
-  .btn-secondary {
-    padding: 0.6rem 1rem;
-    background-color: #334155;
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
+
+  .section-header h2 {
+    margin: 0.5rem 0 0 0;
+    font-size: 1.5rem;
     font-weight: 600;
   }
-  .btn-secondary:hover {
-    background-color: #475569;
+
+  .badge {
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
+
+  p, li {
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: #000;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  }
+
+  .btn-primary:disabled {
+    background-color: var(--border-color);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background-color: var(--secondary);
+    color: var(--text-main);
+    flex: 1;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--secondary-hover);
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #e2e8f0;
+  }
+
   .input-field {
     width: 100%;
-    padding: 0.6rem 0.8rem;
-    background-color: #0f172a;
-    border: 1px solid #334155;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    color: #ffffff;
-    margin-top: 0.3rem;
-    margin-bottom: 1rem;
+    color: var(--text-main);
+    transition: var(--transition);
     box-sizing: border-box;
   }
+
   .input-field:focus {
     outline: none;
-    border-color: #06b6d4;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
   }
+
+  .camera-container {
+    background-color: var(--bg-input);
+    border: 2px dashed var(--border-color);
+    border-radius: 0.5rem;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    margin-top: 0.5rem;
+    transition: var(--transition);
+  }
+
+  .camera-container.active {
+    border-style: solid;
+    border-color: var(--primary);
+  }
+
+  .alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .oculto {
     display: none !important;
   }
+  
+  .checkbox-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 1rem;
+    background-color: rgba(15, 23, 42, 0.5);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+  }
+  
+  .checkbox-container:hover {
+    border-color: #475569;
+  }
+  
+  input[type="checkbox"] {
+    margin-top: 0.25rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--primary);
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 </style>
 
-<div style="max-width: 600px; margin: 0 auto;">
+<div class="registro-wrapper">
 
   <!-- PASO 1: AVISO DE HABEAS DATA -->
   <div id="seccion-habeas-data" class="card-container">
-    <span style="color: #06b6d4; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Aviso de tratamiento de datos</span>
-    <h2 style="margin-top: 0.3rem; margin-bottom: 1rem; font-size: 1.5rem;">Autorización Habeas Data</h2>
+    <div class="section-header">
+      <span class="badge">Aviso Legal</span>
+      <h2>Autorización Habeas Data</h2>
+    </div>
     
-    <div style="font-size: 0.875rem; color: #cbd5e1; line-height: 1.6;">
-      <p>De conformidad con la Ley 1581 de 2012 y el Decreto 1377 de 2013 (régimen de protección de datos personales en Colombia), la administración del conjunto residencial recolectará y tratará sus datos personales, incluida su imagen facial, con las siguientes finalidades:</p>
-      <ul style="padding-left: 1.2rem; margin: 0.5rem 0;">
+    <div class="content-text">
+      <p>De conformidad con la Ley 1581 de 2012 y el Decreto 1377 de 2013, la administración recolectará y tratará sus datos personales, incluida su imagen facial, con las siguientes finalidades:</p>
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
         <li>Identificación y control de acceso peatonal y vehicular.</li>
-        <li>Registro de habitantes y generación de credenciales para terminales biométricos.</li>
+        <li>Registro de habitantes y generación de credenciales biométricas.</li>
         <li>Atención de emergencias y seguridad del conjunto.</li>
       </ul>
-      <p>Sus datos se almacenarán de forma segura y no se compartirán con terceros distintos de los proveedores del sistema de control de acceso. Puede solicitar en cualquier momento la actualización, corrección o eliminación de su información ante la administración.</p>
+      <p>Sus datos se almacenarán de forma segura. Puede solicitar en cualquier momento la actualización o eliminación de su información.</p>
     </div>
 
-    <hr style="border-color: #334155; margin: 1.2rem 0;">
-
-    <label style="display: flex; gap: 0.5rem; align-items: flex-start; cursor: pointer; font-size: 0.875rem;">
-      <input type="checkbox" id="check-habeas" style="margin-top: 0.2rem;">
-      <span>He leído y acepto el tratamiento de mis datos personales conforme a lo descrito.</span>
+    <label class="checkbox-container" style="margin-top: 1.5rem;">
+      <input type="checkbox" id="check-habeas">
+      <span style="font-size: 0.9rem; line-height: 1.4;">He leído y acepto el tratamiento de mis datos personales conforme a lo descrito.</span>
     </label>
 
-    <button type="button" id="btn-continuar" disabled class="btn-primary">
-      Aceptar y continuar
+    <button type="button" id="btn-continuar" disabled class="btn btn-primary">
+      Aceptar y Continuar
     </button>
   </div>
 
-  <!-- PASO 2: FORMULARIO DE REGISTRO (INICIA OCULTO) -->
+  <!-- PASO 2: FORMULARIO DE REGISTRO -->
   <div id="seccion-formulario" class="card-container oculto">
-    <div style="border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
-      <h2 style="margin: 0; font-size: 1.4rem;">Registro de Nuevo Residente</h2>
-      <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #94a3b8;">Ingresa los datos personales y captura la fotografía facial</p>
+    <div class="section-header">
+      <span class="badge">Paso 2 de 2</span>
+      <h2>Registro de Nuevo Residente</h2>
+      <p style="margin-top: 0.5rem;">Ingresa los datos y captura la fotografía para el acceso.</p>
     </div>
 
-    <div id="mensaje-alerta" class="oculto" style="padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.875rem;"></div>
+    <div id="mensaje-alerta" class="alert oculto"></div>
 
     <form id="form-registro">
-      <label for="nombre" style="font-size: 0.875rem;">Nombre Completo *</label>
-      <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez" class="input-field">
+      <div class="form-group">
+        <label for="nombre">Nombre Completo *</label>
+        <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez" class="input-field" autocomplete="name">
+      </div>
 
-      <label for="documento" style="font-size: 0.875rem;">Documento de Identidad *</label>
-      <input type="text" id="documento" name="documento" required placeholder="Ej: 1020304050" class="input-field">
+      <div class="form-group">
+        <label for="documento">Documento de Identidad *</label>
+        <input type="text" id="documento" name="documento" required placeholder="Ej: 1020304050" class="input-field" pattern="[0-9]+" title="Solo números">
+      </div>
 
-      <label for="apartamento" style="font-size: 0.875rem;">Apartamento *</label>
-      <input type="text" id="apartamento" name="apartamento" required placeholder="Ej: 101" class="input-field">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label for="apartamento">Apartamento *</label>
+          <input type="text" id="apartamento" name="apartamento" required placeholder="Ej: 101" class="input-field">
+        </div>
 
-      <label for="tipo_persona" style="font-size: 0.875rem;">Tipo de Usuario *</label>
-      <select id="tipo_persona" name="tipo_persona" required class="input-field">
-        <option value="">Seleccione una opción...</option>
-        <option value="Propietario">Propietario</option>
-        <option value="Arrendatario">Arrendatario</option>
-        <option value="Visitante">Visitante</option>
-      </select>
-
-      <label style="font-size: 0.875rem;">Fotografía del Rostro *</label>
-      <div style="background-color: #0f172a; border: 1px solid #334155; border-radius: 0.5rem; min-height: 240px; display: flex; align-items: center; justify-content: center; margin-top: 0.3rem; overflow: hidden; position: relative;">
-        <video id="video" autoplay playsinline style="width: 100%; height: 240px; object-fit: cover;" class="oculto"></video>
-        <img id="foto-preview" style="width: 100%; height: 240px; object-fit: cover;" class="oculto" alt="Vista previa">
-        <div id="placeholder-camara" style="text-align: center; padding: 1rem; color: #94a3b8;">
-          <p style="margin: 0; font-size: 0.85rem;">Activa la cámara para tomar la fotografía de acceso</p>
+        <div class="form-group">
+          <label for="tipo_persona">Tipo de Usuario *</label>
+          <select id="tipo_persona" name="tipo_persona" required class="input-field">
+            <option value="" disabled selected>Seleccione...</option>
+            <option value="Propietario">Propietario</option>
+            <option value="Arrendatario">Arrendatario</option>
+            <option value="Visitante">Visitante</option>
+          </select>
         </div>
       </div>
 
-      <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem;">
-        <button type="button" id="btn-iniciar-camara" class="btn-secondary" style="flex: 1;">
-          Iniciar Cámara
-        </button>
-        <button type="button" id="btn-capturar" disabled class="btn-primary" style="flex: 1; margin-top: 0; opacity: 0.5;">
-          Capturar Foto
-        </button>
+      <div class="form-group">
+        <label>Fotografía del Rostro *</label>
+        <div id="contenedor-camara" class="camera-container">
+          <video id="video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;" class="oculto"></video>
+          <img id="foto-preview" style="width: 100%; height: 100%; object-fit: cover;" class="oculto" alt="Vista previa">
+          <div id="placeholder-camara" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+            <svg style="width: 48px; height: 48px; margin: 0 auto 1rem auto; opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <p style="margin: 0; font-size: 0.9rem;">Haz clic en "Iniciar Cámara" para comenzar</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+          <button type="button" id="btn-iniciar-camara" class="btn btn-secondary">
+            Iniciar Cámara
+          </button>
+          <button type="button" id="btn-capturar" disabled class="btn btn-primary" style="margin-top: 0; flex: 1;">
+            Capturar Foto
+          </button>
+        </div>
       </div>
 
-      <button type="submit" id="btn-guardar" disabled class="btn-primary" style="opacity: 0.5; margin-top: 1.5rem;">
+      <button type="submit" id="btn-guardar" disabled class="btn btn-primary" style="margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">
         Registrar Acceso
       </button>
     </form>
@@ -149,14 +302,16 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // Elementos DOM
     const checkHabeas = document.getElementById('check-habeas');
     const btnContinuar = document.getElementById('btn-continuar');
     const seccionHabeas = document.getElementById('seccion-habeas-data');
     const seccionFormulario = document.getElementById('seccion-formulario');
-
+    
     const video = document.getElementById('video');
     const fotoPreview = document.getElementById('foto-preview');
     const placeholderCamara = document.getElementById('placeholder-camara');
+    const contenedorCamara = document.getElementById('contenedor-camara');
     const btnIniciarCamara = document.getElementById('btn-iniciar-camara');
     const btnCapturar = document.getElementById('btn-capturar');
     const btnGuardar = document.getElementById('btn-guardar');
@@ -166,6 +321,24 @@
     let streamCamara = null;
     let blobFoto = null;
 
+    // Función para mostrar alertas estilizadas
+    const mostrarAlerta = (mensaje, tipo) => {
+      mensajeAlerta.textContent = mensaje;
+      mensajeAlerta.classList.remove('oculto');
+      if (tipo === 'exito') {
+        mensajeAlerta.style.backgroundColor = 'var(--success-bg)';
+        mensajeAlerta.style.color = 'var(--success-text)';
+        mensajeAlerta.style.border = '1px solid #047857';
+      } else {
+        mensajeAlerta.style.backgroundColor = 'var(--error-bg)';
+        mensajeAlerta.style.color = 'var(--error-text)';
+        mensajeAlerta.style.border = '1px solid #b91c1c';
+      }
+      // Ocultar tras 5 segundos
+      setTimeout(() => mensajeAlerta.classList.add('oculto'), 5000);
+    };
+
+    // Paso 1: Habeas Data
     checkHabeas.addEventListener('change', () => {
       btnContinuar.disabled = !checkHabeas.checked;
     });
@@ -173,23 +346,37 @@
     btnContinuar.addEventListener('click', () => {
       seccionHabeas.classList.add('oculto');
       seccionFormulario.classList.remove('oculto');
+      // Pequeña animación al cambiar
+      seccionFormulario.style.animation = 'none';
+      setTimeout(() => seccionFormulario.style.animation = 'fadeIn 0.4s ease-out forwards', 10);
     });
 
+    // Paso 2: Configuración y control de cámara
     btnIniciarCamara.addEventListener('click', async () => {
       try {
-        streamCamara = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        video.srcObject = streamCamara;
-        video.classList.remove('oculto');
-        placeholderCamara.classList.add('oculto');
-        fotoPreview.classList.add('oculto');
-
-        btnCapturar.disabled = false;
-        btnCapturar.style.opacity = '1';
-        btnCapturar.style.cursor = 'pointer';
+        btnIniciarCamara.textContent = 'Iniciando...';
+        btnIniciarCamara.disabled = true;
         
-        btnIniciarCamara.textContent = 'Reiniciar Cámara';
+        streamCamara = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        video.srcObject = streamCamara;
+        
+        video.onloadedmetadata = () => {
+          video.classList.remove('oculto');
+          placeholderCamara.classList.add('oculto');
+          fotoPreview.classList.add('oculto');
+          contenedorCamara.classList.add('active');
+
+          btnCapturar.disabled = false;
+          btnIniciarCamara.textContent = 'Reiniciar Cámara';
+          btnIniciarCamara.disabled = false;
+          
+          blobFoto = null;
+          btnGuardar.disabled = true;
+        };
       } catch (err) {
-        alert('No se pudo acceder a la cámara. Revisa los permisos de tu navegador.');
+        btnIniciarCamara.textContent = 'Iniciar Cámara';
+        btnIniciarCamara.disabled = false;
+        mostrarAlerta('No se pudo acceder a la cámara. Revisa los permisos del navegador.', 'error');
       }
     });
 
@@ -198,6 +385,11 @@
       canvas.width = video.videoWidth || 640;
       canvas.height = video.videoHeight || 480;
       const ctx = canvas.getContext('2d');
+      
+      // Efecto visual de flash
+      contenedorCamara.style.opacity = '0.5';
+      setTimeout(() => contenedorCamara.style.opacity = '1', 150);
+
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       canvas.toBlob((blob) => {
@@ -210,23 +402,25 @@
 
         video.classList.add('oculto');
         fotoPreview.classList.remove('oculto');
+        contenedorCamara.classList.remove('active');
 
         btnGuardar.disabled = false;
-        btnGuardar.style.opacity = '1';
-        btnGuardar.style.cursor = 'pointer';
+        btnCapturar.disabled = true;
       }, 'image/jpeg', 0.9);
     });
 
+    // Paso 3: Envío del formulario al backend
     formRegistro.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (!blobFoto) {
-        alert('Por favor toma la fotografía antes de registrar.');
+        mostrarAlerta('Por favor toma la fotografía antes de registrar.', 'error');
         return;
       }
 
+      const btnOriginalText = btnGuardar.textContent;
       btnGuardar.disabled = true;
-      btnGuardar.textContent = 'Procesando y Guardando...';
+      btnGuardar.innerHTML = 'Procesando... <svg style="width:1.2rem;height:1.2rem;animation:spin 1s linear infinite;margin-left:0.5rem;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
 
       const formData = new FormData();
       formData.append('nombre_completo', document.getElementById('nombre').value);
@@ -245,28 +439,33 @@
         const datos = await respuesta.json();
 
         if (respuesta.ok) {
-          mensajeAlerta.style.backgroundColor = '#065f46';
-          mensajeAlerta.style.color = '#34d399';
-          mensajeAlerta.textContent = datos.mensaje || '¡Habitante registrado con éxito!';
-          mensajeAlerta.classList.remove('oculto');
+          mostrarAlerta(datos.mensaje || '¡Habitante registrado con éxito!', 'exito');
           
+          // Resetear el formulario completo
           formRegistro.reset();
           fotoPreview.classList.add('oculto');
           placeholderCamara.classList.remove('oculto');
           btnGuardar.disabled = true;
-          btnGuardar.style.opacity = '0.5';
           btnGuardar.textContent = 'Registrar Acceso';
           blobFoto = null;
+          
+          // Volver a la sección de Habeas Data tras 3 segundos
+          setTimeout(() => {
+            seccionFormulario.classList.add('oculto');
+            seccionHabeas.classList.remove('oculto');
+            checkHabeas.checked = false;
+            btnContinuar.disabled = true;
+            seccionHabeas.style.animation = 'none';
+            setTimeout(() => seccionHabeas.style.animation = 'fadeIn 0.4s ease-out forwards', 10);
+          }, 3000);
+          
         } else {
           throw new Error(datos.detail || 'Ocurrió un error al procesar el registro.');
         }
       } catch (err) {
-        mensajeAlerta.style.backgroundColor = '#991b1b';
-        mensajeAlerta.style.color = '#fca5a5';
-        mensajeAlerta.textContent = err.message;
-        mensajeAlerta.classList.remove('oculto');
+        mostrarAlerta(err.message, 'error');
         btnGuardar.disabled = false;
-        btnGuardar.textContent = 'Registrar Acceso';
+        btnGuardar.textContent = btnOriginalText;
       }
     });
   });
