@@ -1,112 +1,171 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block titulo %}Control de Acceso Residencial{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Control de Acceso{% endblock %} - SafeAccess</title>
+  
+  <!-- Fuente Google Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-nav: #111827;
+      --border-color: #1e293b;
+      --primary: #06b6d4;
+      --primary-hover: #0891b2;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          // Paleta inspirada en TiendaTecno (Azul Noche / Pizarra / Cian)
-          navy: { 
-            950: '#0f172a', /* Fondo principal ultra oscuro */
-            900: '#1e293b', /* Tarjetas / Contenedores */
-            800: '#334155', /* Bordes y elementos hover */
-          },
-          paper: '#0f172a',   /* Mantiene coherencia de fondo oscuro */
-          teal: { 
-            DEFAULT: '#06b6d4', /* Cian vibrante como color primario */
-            dark: '#0891b2' 
-          },
-          accent: '#10b981',    /* Esmeralda para detalles/éxito */
-        },
-        fontFamily: {
-          display: ['Plus Jakarta Sans', 'sans-serif'],
-          sans: ['Inter', 'sans-serif'],
-        },
-      },
-    },
-  };
-</script>
-<style>
-  /* Personalización adicional para inputs en fondo oscuro */
-  input, select {
-    background-color: #0f172a !important;
-    color: #f8fafc !important;
-    border-color: #334155 !important;
-  }
-  input::placeholder {
-    color: #64748b !important;
-  }
-  input:focus, select:focus {
-    border-color: #06b6d4 !important;
-  }
-  /* Estilos para tablas e historial */
-  .bg-white {
-    background-color: #1e293b !important;
-    color: #f8fafc !important;
-    border-color: #334155 !important;
-  }
-  .bg-slate-50 {
-    background-color: #0f172a !important;
-    color: #94a3b8 !important;
-  }
-  .text-slate-900, .text-navy-950, .text-slate-700, .text-slate-600 {
-    color: #f8fafc !important;
-  }
-  .text-slate-500, .text-slate-400 {
-    color: #94a3b8 !important;
-  }
-  .border-slate-200, .border-slate-100, .border-slate-300 {
-    border-color: #334155 !important;
-  }
-  .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
-    border-color: #334155 !important;
-  }
-</style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background-color: var(--bg-nav);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+
+    .navbar-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.5rem 0.9rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a:hover {
+      color: var(--text-main);
+      background-color: #1e293b;
+    }
+
+    .nav-item a.active {
+      color: var(--primary);
+      background-color: rgba(6, 182, 212, 0.1);
+    }
+
+    .main-content {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.25rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background-color: var(--bg-nav);
+    }
+  </style>
 </head>
-<body class="bg-navy-950 font-sans text-slate-100 antialiased min-h-screen flex flex-col">
+<body>
 
-  <!-- Header Superior estilo Glassmorphism -->
-  <header class="bg-navy-900/80 backdrop-blur-md border-b border-navy-800 text-white sticky top-0 z-40">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2.5 font-display font-semibold tracking-tight text-base sm:text-lg">
-        <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-teal text-navy-950 font-bold text-sm shadow-md">
-          <i class="fa-solid fa-shield-halved"></i>
-        </span>
-        <span class="hidden xs:inline">Control de Acceso Residencial</span>
-        <span class="xs:hidden">Control Acceso</span>
+  <!-- BARRA DE NAVEGACIÓN -->
+  <header class="navbar">
+    <div class="navbar-container">
+      <a href="/" class="brand">
+        <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+        <span>Acceso Residencial</span>
       </a>
-      <nav class="flex gap-2 text-sm font-medium">
-        <a href="/" class="px-3.5 py-2 rounded-lg border border-transparent hover:bg-navy-800 transition {% block nav_registro %}{% endblock %}">
-          <i class="fa-solid fa-user-plus mr-1.5 text-teal"></i>Registro
-        </a>
-        <a href="/historial" class="px-3.5 py-2 rounded-lg border border-transparent hover:bg-navy-800 transition {% block nav_historial %}{% endblock %}">
-          <i class="fa-solid fa-list mr-1.5 text-teal"></i>Historial
-        </a>
-      </nav>
+
+      <ul class="nav-links">
+        <li class="nav-item">
+          <a href="/registro" id="link-registro">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            Registro
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/historial" id="link-historial">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            Historial
+          </a>
+        </li>
+      </ul>
     </div>
   </header>
 
-  <!-- Contenido principal -->
-  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+  <!-- CONTENIDO DINÁMICO -->
+  <main class="main-content">
     {% block contenido %}{% endblock %}
   </main>
 
-  <!-- Footer -->
-  <footer class="text-center text-xs text-slate-400 py-6 px-4 border-t border-navy-800 bg-navy-900/50">
-    Datos personales tratados conforme a la Ley 1581 de 2012 (Habeas Data) · Colombia
+  <footer>
+    <p>Sistema de Control de Acceso y Reconocimiento Facial &copy; 2026</p>
   </footer>
 
-  {% block scripts %}{% endblock %}
+  <script>
+    // Resalta el enlace activo de navegación automáticamente
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentPath = window.location.pathname;
+      if (currentPath.includes('historial')) {
+        document.getElementById('link-historial')?.classList.add('active');
+      } else if (currentPath.includes('registro') || currentPath === '/') {
+        document.getElementById('link-registro')?.classList.add('active');
+      }
+    });
+  </script>
 </body>
 </html>

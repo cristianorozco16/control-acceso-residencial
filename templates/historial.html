@@ -1,109 +1,159 @@
 {% extends "base.html" %}
-{% block titulo %}Historial de habitantes · Control de Acceso Residencial{% endblock %}
-{% block nav_historial %}bg-navy-800{% endblock %}
+
+{% block titulo %}Historial de Accesos{% endblock %}
 
 {% block contenido %}
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-  <div>
-    <h1 class="font-display text-2xl font-semibold text-navy-950">Habitantes registrados</h1>
-    <p class="text-sm text-slate-500 mt-1">{{ habitantes|length }} registro(s) en el sistema</p>
+<style>
+  .historial-container {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  }
+
+  .header-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .tabla-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+  }
+
+  th {
+    background-color: #0f172a;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #334155;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid #334155;
+    color: #f8fafc;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: rgba(51, 65, 85, 0.4);
+  }
+
+  .badge-tipo {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .tipo-propietario { background-color: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+  .tipo-arrendatario { background-color: rgba(168, 85, 247, 0.15); color: #c084fc; }
+  .tipo-visitante { background-color: rgba(234, 179, 8, 0.15); color: #fde047; }
+
+  .avatar-foto {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #334155;
+  }
+
+  .btn-recargar {
+    background-color: #334155;
+    color: #f8fafc;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s;
+  }
+
+  .btn-recargar:hover {
+    background-color: #475569;
+  }
+</style>
+
+<div class="historial-container">
+  <div class="header-seccion">
+    <div>
+      <h2 style="margin: 0; font-size: 1.4rem;">Historial de Registros</h2>
+      <p style="margin: 0.3rem 0 0 0; color: #94a3b8; font-size: 0.85rem;">Lista de habitantes y visitantes registrados en el sistema</p>
+    </div>
+    <button class="btn-recargar" onclick="window.location.reload();">
+      <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      Actualizar
+    </button>
   </div>
-  <div class="flex gap-2">
-    <a href="/api/exportar-hikvision"
-       class="inline-flex items-center gap-2 rounded-lg bg-navy-950 text-white text-sm font-medium px-4 py-2.5 hover:bg-navy-800 transition whitespace-nowrap">
-      Exportar para Hikvision
-    </a>
-    <a href="/" class="inline-flex items-center gap-2 rounded-lg bg-teal text-white text-sm font-medium px-4 py-2.5 hover:bg-teal-dark transition whitespace-nowrap">
-      + Nuevo registro
-    </a>
+
+  <div class="tabla-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Documento</th>
+          <th>Apartamento</th>
+          <th>Tipo</th>
+          <th>Fecha / Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if registros %}
+          {% for item in registros %}
+          <tr>
+            <td>
+              {% if item.foto_path %}
+                <img src="/{{ item.foto_path }}" alt="Foto" class="avatar-foto" onerror="this.src='https://via.placeholder.com/44?text=Rostro';">
+              {% else %}
+                <div class="avatar-foto" style="background-color: #0f172a; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.7rem;">N/A</div>
+              {% endif %}
+            </td>
+            <td style="font-weight: 600;">{{ item.nombre_completo or item.nombre }}</td>
+            <td style="color: #94a3b8;">{{ item.documento }}</td>
+            <td><span style="background-color: #0f172a; padding: 0.2rem 0.5rem; border-radius: 0.3rem;">Apt {{ item.apartamento }}</span></td>
+            <td>
+              <span class="badge-tipo 
+                {% if item.tipo_habitante == 'Propietario' %}tipo-propietario
+                {% elif item.tipo_habitante == 'Arrendatario' %}tipo-arrendatario
+                {% else %}tipo-visitante{% endif %}">
+                {{ item.tipo_habitante or 'General' }}
+              </span>
+            </td>
+            <td style="color: #94a3b8; font-size: 0.8rem;">{{ item.fecha or item.created_at or 'Reciente' }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 3rem 1rem;">
+              No hay registros disponibles en la base de datos.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
   </div>
 </div>
-
-<div class="mb-4">
-  <input id="buscador" type="text" placeholder="Buscar por nombre, documento, torre o apartamento..."
-    class="w-full sm:max-w-sm rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent">
-</div>
-
-<div class="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-  <table class="w-full text-sm">
-    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-      <tr>
-        <th class="text-left font-medium px-4 py-3">Foto</th>
-        <th class="text-left font-medium px-4 py-3">Nombre</th>
-        <th class="text-left font-medium px-4 py-3">Documento</th>
-        <th class="text-left font-medium px-4 py-3">Torre / Apto</th>
-        <th class="text-left font-medium px-4 py-3">Tipo</th>
-        <th class="text-left font-medium px-4 py-3">Registrado</th>
-      </tr>
-    </thead>
-    <tbody id="cuerpoTabla" class="divide-y divide-slate-100">
-      {% for h in habitantes %}
-      <tr>
-        <td class="px-4 py-2.5"><img src="{{ h.foto_path }}" class="h-10 w-9 object-cover rounded-md ring-1 ring-teal/40"></td>
-        <td class="px-4 py-2.5 font-medium text-navy-950 whitespace-nowrap">{{ h.nombre_completo }}</td>
-        <td class="px-4 py-2.5 font-mono tabular-nums text-slate-600 whitespace-nowrap">{{ h.tipo_documento }} {{ h.documento }}</td>
-        <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">{{ h.torre_bloque }} {{ h.apartamento }}</td>
-        <td class="px-4 py-2.5 text-slate-600 capitalize whitespace-nowrap">{{ h.tipo_habitante.replace('_', ' ') }}</td>
-        <td class="px-4 py-2.5 text-slate-500 whitespace-nowrap">{{ h.fecha_registro.strftime('%Y-%m-%d %H:%M') if h.fecha_registro else '' }}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="6" class="px-4 py-10 text-center text-slate-400">Aún no hay habitantes registrados.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-  const buscador = document.getElementById('buscador');
-  const cuerpoTabla = document.getElementById('cuerpoTabla');
-  let temporizador = null;
-
-  // "Debounce": espera 250ms después de que el usuario deja de escribir
-  // antes de consultar el backend, para no disparar una petición por
-  // cada tecla presionada.
-  buscador.addEventListener('input', () => {
-    clearTimeout(temporizador);
-    temporizador = setTimeout(buscar, 250);
-  });
-
-  // Llama a GET /api/habitantes?q=... (definido en main.py) y vuelve a
-  // pintar la tabla con los resultados, sin recargar la página.
-  async function buscar() {
-    const q = buscador.value.trim();
-    const resp = await fetch(`/api/habitantes?q=${encodeURIComponent(q)}`);
-    const datos = await resp.json();
-    renderizarTabla(datos);
-  }
-
-  // Reconstruye el <tbody> de la tabla a partir del JSON recibido.
-  function renderizarTabla(habitantes) {
-    if (habitantes.length === 0) {
-      cuerpoTabla.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">No se encontraron resultados.</td></tr>`;
-      return;
-    }
-    cuerpoTabla.innerHTML = habitantes.map((h) => `
-      <tr>
-        <td class="px-4 py-2.5"><img src="${h.foto_path}" class="h-10 w-9 object-cover rounded-md ring-1 ring-teal/40"></td>
-        <td class="px-4 py-2.5 font-medium text-navy-950 whitespace-nowrap">${escapeHtml(h.nombre_completo)}</td>
-        <td class="px-4 py-2.5 font-mono tabular-nums text-slate-600 whitespace-nowrap">${escapeHtml(h.tipo_documento)} ${escapeHtml(h.documento)}</td>
-        <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">${escapeHtml(h.torre_bloque || '')} ${escapeHtml(h.apartamento)}</td>
-        <td class="px-4 py-2.5 text-slate-600 capitalize whitespace-nowrap">${escapeHtml((h.tipo_habitante || '').replace('_', ' '))}</td>
-        <td class="px-4 py-2.5 text-slate-500 whitespace-nowrap">${h.fecha_registro ? h.fecha_registro.replace('T', ' ').slice(0, 16) : ''}</td>
-      </tr>
-    `).join('');
-  }
-
-  // Evita inyección de HTML/XSS al insertar texto dinámico con innerHTML:
-  // usa el propio navegador (vía textContent) para escapar caracteres
-  // especiales como < > & antes de insertarlos en la tabla.
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str ?? '';
-    return div.innerHTML;
-  }
-</script>
 {% endblock %}
