@@ -1,26 +1,80 @@
 {% extends "base.html" %}
 
-{% block titulo %}Registro de Acceso · Control de Acceso Residencial{% endblock %}
-{% block nav_registro %}bg-navy-800{% endblock %}
+{% block titulo %}Registro de Acceso{% endblock %}
 
 {% block contenido %}
-<div class="max-w-4xl mx-auto">
+<style>
+  .card-container {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: #f8fafc;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  }
+  .btn-primary {
+    background-color: #06b6d4;
+    color: #0f172a;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+  }
+  .btn-primary:hover {
+    background-color: #0891b2;
+  }
+  .btn-primary:disabled {
+    background-color: #334155;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    padding: 0.6rem 1rem;
+    background-color: #334155;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-secondary:hover {
+    background-color: #475569;
+  }
+  .input-field {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: #06b6d4;
+  }
+  .oculto {
+    display: none !important;
+  }
+</style>
+
+<div style="max-width: 600px; margin: 0 auto;">
 
   <!-- PASO 1: AVISO DE HABEAS DATA -->
-  <div id="seccion-habeas-data" class="bg-navy-900 border border-navy-800 rounded-xl p-6 sm:p-8 shadow-lg mb-6">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-teal/10">
-        <i class="fa-solid fa-file-shield text-teal text-lg"></i>
-      </div>
-      <div>
-        <span class="text-teal font-bold text-xs uppercase tracking-wider">Aviso de tratamiento de datos</span>
-        <h2 class="font-display text-2xl font-semibold text-white mt-1">Autorización Habeas Data</h2>
-      </div>
-    </div>
+  <div id="seccion-habeas-data" class="card-container">
+    <span style="color: #06b6d4; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Aviso de tratamiento de datos</span>
+    <h2 style="margin-top: 0.3rem; margin-bottom: 1rem; font-size: 1.5rem;">Autorización Habeas Data</h2>
     
-    <div class="text-sm text-slate-300 leading-relaxed space-y-3 mb-6 bg-navy-950/50 p-5 rounded-lg border border-navy-800">
+    <div style="font-size: 0.875rem; color: #cbd5e1; line-height: 1.6;">
       <p>De conformidad con la Ley 1581 de 2012 y el Decreto 1377 de 2013 (régimen de protección de datos personales en Colombia), la administración del conjunto residencial recolectará y tratará sus datos personales, incluida su imagen facial, con las siguientes finalidades:</p>
-      <ul class="list-disc pl-5 space-y-1 text-slate-400 marker:text-teal">
+      <ul style="padding-left: 1.2rem; margin: 0.5rem 0;">
         <li>Identificación y control de acceso peatonal y vehicular.</li>
         <li>Registro de habitantes y generación de credenciales para terminales biométricos.</li>
         <li>Atención de emergencias y seguridad del conjunto.</li>
@@ -28,93 +82,66 @@
       <p>Sus datos se almacenarán de forma segura y no se compartirán con terceros distintos de los proveedores del sistema de control de acceso. Puede solicitar en cualquier momento la actualización, corrección o eliminación de su información ante la administración.</p>
     </div>
 
-    <label class="flex items-start gap-3 cursor-pointer group">
-      <input type="checkbox" id="check-habeas" class="mt-1 h-5 w-5 rounded border-navy-800 bg-navy-950 text-teal focus:ring-teal focus:ring-offset-navy-900 cursor-pointer">
-      <span class="text-sm text-slate-300 group-hover:text-white transition-colors">He leído y acepto el tratamiento de mis datos personales conforme a lo descrito.</span>
+    <hr style="border-color: #334155; margin: 1.2rem 0;">
+
+    <label style="display: flex; gap: 0.5rem; align-items: flex-start; cursor: pointer; font-size: 0.875rem;">
+      <input type="checkbox" id="check-habeas" style="margin-top: 0.2rem;">
+      <span>He leído y acepto el tratamiento de mis datos personales conforme a lo descrito.</span>
     </label>
 
-    <div class="mt-8 flex justify-end">
-      <button type="button" id="btn-continuar" disabled class="bg-teal hover:bg-teal-dark text-navy-950 font-bold py-2.5 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-        Aceptar y continuar <i class="fa-solid fa-arrow-right"></i>
-      </button>
-    </div>
+    <button type="button" id="btn-continuar" disabled class="btn-primary">
+      Aceptar y continuar
+    </button>
   </div>
 
   <!-- PASO 2: FORMULARIO DE REGISTRO (INICIA OCULTO) -->
-  <div id="seccion-formulario" class="bg-navy-900 border border-navy-800 rounded-xl p-6 sm:p-8 shadow-lg hidden">
-    <div class="border-b border-navy-800 pb-5 mb-6">
-      <h2 class="font-display text-2xl font-semibold text-white">Registro de Nuevo Residente</h2>
-      <p class="text-sm text-slate-400 mt-1">Ingresa los datos personales y captura la fotografía facial para el sistema biométrico.</p>
+  <div id="seccion-formulario" class="card-container oculto">
+    <div style="border-bottom: 1px solid #334155; padding-bottom: 0.8rem; margin-bottom: 1.2rem;">
+      <h2 style="margin: 0; font-size: 1.4rem;">Registro de Nuevo Residente</h2>
+      <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #94a3b8;">Ingresa los datos personales y captura la fotografía facial</p>
     </div>
 
-    <!-- Alerta de mensajes -->
-    <div id="mensaje-alerta" class="hidden mb-6 p-4 rounded-lg text-sm font-medium flex items-center gap-2"></div>
+    <div id="mensaje-alerta" class="oculto" style="padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.875rem;"></div>
 
-    <form id="form-registro" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      
-      <!-- Columna Izquierda: Datos Personales -->
-      <div class="space-y-4">
-        <div>
-          <label for="nombre" class="block text-sm font-medium text-slate-300 mb-1.5">Nombre Completo *</label>
-          <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez" class="w-full rounded-lg border border-navy-800 bg-navy-950 px-4 py-2.5 text-sm text-white focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal transition-colors">
-        </div>
+    <form id="form-registro">
+      <label for="nombre" style="font-size: 0.875rem;">Nombre Completo *</label>
+      <input type="text" id="nombre" name="nombre" required placeholder="Ej: Juan Pérez" class="input-field">
 
-        <div>
-          <label for="documento" class="block text-sm font-medium text-slate-300 mb-1.5">Documento de Identidad *</label>
-          <input type="text" id="documento" name="documento" required placeholder="Ej: 1020304050" class="w-full rounded-lg border border-navy-800 bg-navy-950 px-4 py-2.5 text-sm text-white focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal transition-colors">
-        </div>
+      <label for="documento" style="font-size: 0.875rem;">Documento de Identidad *</label>
+      <input type="text" id="documento" name="documento" required placeholder="Ej: 1020304050" class="input-field">
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="apartamento" class="block text-sm font-medium text-slate-300 mb-1.5">Apartamento *</label>
-            <input type="text" id="apartamento" name="apartamento" required placeholder="Ej: 101" class="w-full rounded-lg border border-navy-800 bg-navy-950 px-4 py-2.5 text-sm text-white focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal transition-colors">
-          </div>
-          
-          <div>
-            <label for="tipo_persona" class="block text-sm font-medium text-slate-300 mb-1.5">Tipo de Usuario *</label>
-            <select id="tipo_persona" name="tipo_persona" required class="w-full rounded-lg border border-navy-800 bg-navy-950 px-4 py-2.5 text-sm text-white focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal transition-colors appearance-none">
-              <option value="">Seleccione...</option>
-              <option value="Propietario">Propietario</option>
-              <option value="Arrendatario">Arrendatario</option>
-              <option value="Visitante">Visitante</option>
-            </select>
-          </div>
+      <label for="apartamento" style="font-size: 0.875rem;">Apartamento *</label>
+      <input type="text" id="apartamento" name="apartamento" required placeholder="Ej: 101" class="input-field">
+
+      <label for="tipo_persona" style="font-size: 0.875rem;">Tipo de Usuario *</label>
+      <select id="tipo_persona" name="tipo_persona" required class="input-field">
+        <option value="">Seleccione una opción...</option>
+        <option value="Propietario">Propietario</option>
+        <option value="Arrendatario">Arrendatario</option>
+        <option value="Visitante">Visitante</option>
+      </select>
+
+      <label style="font-size: 0.875rem;">Fotografía del Rostro *</label>
+      <div style="background-color: #0f172a; border: 1px solid #334155; border-radius: 0.5rem; min-height: 240px; display: flex; align-items: center; justify-content: center; margin-top: 0.3rem; overflow: hidden; position: relative;">
+        <video id="video" autoplay playsinline style="width: 100%; height: 240px; object-fit: cover;" class="oculto"></video>
+        <img id="foto-preview" style="width: 100%; height: 240px; object-fit: cover;" class="oculto" alt="Vista previa">
+        <div id="placeholder-camara" style="text-align: center; padding: 1rem; color: #94a3b8;">
+          <p style="margin: 0; font-size: 0.85rem;">Activa la cámara para tomar la fotografía de acceso</p>
         </div>
       </div>
 
-      <!-- Columna Derecha: Captura Biométrica -->
-      <div class="flex flex-col h-full">
-        <label class="block text-sm font-medium text-slate-300 mb-1.5">Fotografía del Rostro *</label>
-        
-        <div class="flex-1 bg-navy-950 border border-navy-800 rounded-lg relative overflow-hidden flex items-center justify-center min-h-[240px] shadow-inner group">
-          <video id="video" autoplay playsinline class="absolute inset-0 w-full h-full object-cover hidden"></video>
-          <img id="foto-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Vista previa">
-          
-          <div id="placeholder-camara" class="text-center p-6 z-10 text-slate-500 group-hover:text-slate-400 transition-colors">
-            <i class="fa-solid fa-camera text-4xl mb-3 opacity-50"></i>
-            <p class="text-sm">Activa la cámara para tomar la fotografía de acceso</p>
-          </div>
-          
-          <!-- Marco decorativo de escaneo -->
-          <div class="absolute inset-0 border-2 border-dashed border-slate-700/50 m-4 rounded pointer-events-none hidden" id="marco-escaneo"></div>
-        </div>
-
-        <div class="flex gap-3 mt-4">
-          <button type="button" id="btn-iniciar-camara" class="flex-1 bg-navy-800 hover:bg-slate-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm flex justify-center items-center gap-2 border border-navy-700">
-            <i class="fa-solid fa-video"></i> Iniciar
-          </button>
-          <button type="button" id="btn-capturar" disabled class="flex-1 bg-teal hover:bg-teal-dark text-navy-950 font-bold py-2.5 px-4 rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-            <i class="fa-solid fa-camera-retro"></i> Capturar
-          </button>
-        </div>
-      </div>
-
-      <!-- Botón de Envío Global -->
-      <div class="md:col-span-2 pt-6 border-t border-navy-800 mt-2">
-        <button type="submit" id="btn-guardar" disabled class="w-full bg-teal hover:bg-teal-dark text-navy-950 font-bold py-3 px-4 rounded-lg transition-all text-base shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex justify-center items-center gap-2">
-          <i class="fa-solid fa-user-check"></i> Registrar Acceso
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem;">
+        <button type="button" id="btn-iniciar-camara" class="btn-secondary" style="flex: 1;">
+          Iniciar Cámara
+        </button>
+        <button type="button" id="btn-capturar" disabled class="btn-primary" style="flex: 1; margin-top: 0; opacity: 0.5;">
+          Capturar Foto
         </button>
       </div>
+
+      <button type="submit" id="btn-guardar" disabled class="btn-primary" style="opacity: 0.5; margin-top: 1.5rem;">
+        Registrar Acceso
+      </button>
     </form>
   </div>
 
@@ -130,7 +157,6 @@
     const video = document.getElementById('video');
     const fotoPreview = document.getElementById('foto-preview');
     const placeholderCamara = document.getElementById('placeholder-camara');
-    const marcoEscaneo = document.getElementById('marco-escaneo');
     const btnIniciarCamara = document.getElementById('btn-iniciar-camara');
     const btnCapturar = document.getElementById('btn-capturar');
     const btnGuardar = document.getElementById('btn-guardar');
@@ -145,22 +171,23 @@
     });
 
     btnContinuar.addEventListener('click', () => {
-      seccionHabeas.classList.add('hidden');
-      seccionFormulario.classList.remove('hidden');
+      seccionHabeas.classList.add('oculto');
+      seccionFormulario.classList.remove('oculto');
     });
 
     btnIniciarCamara.addEventListener('click', async () => {
       try {
         streamCamara = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         video.srcObject = streamCamara;
-        video.classList.remove('hidden');
-        placeholderCamara.classList.add('hidden');
-        fotoPreview.classList.add('hidden');
-        marcoEscaneo.classList.remove('hidden');
-        marcoEscaneo.classList.add('border-teal/50'); // Efecto visual de cámara activa
+        video.classList.remove('oculto');
+        placeholderCamara.classList.add('oculto');
+        fotoPreview.classList.add('oculto');
 
         btnCapturar.disabled = false;
-        btnIniciarCamara.innerHTML = '<i class="fa-solid fa-rotate"></i> Reiniciar';
+        btnCapturar.style.opacity = '1';
+        btnCapturar.style.cursor = 'pointer';
+        
+        btnIniciarCamara.textContent = 'Reiniciar Cámara';
       } catch (err) {
         alert('No se pudo acceder a la cámara. Revisa los permisos de tu navegador.');
       }
@@ -181,11 +208,12 @@
           streamCamara.getTracks().forEach(track => track.stop());
         }
 
-        video.classList.add('hidden');
-        marcoEscaneo.classList.add('hidden');
-        fotoPreview.classList.remove('hidden');
+        video.classList.add('oculto');
+        fotoPreview.classList.remove('oculto');
 
         btnGuardar.disabled = false;
+        btnGuardar.style.opacity = '1';
+        btnGuardar.style.cursor = 'pointer';
       }, 'image/jpeg', 0.9);
     });
 
@@ -193,12 +221,12 @@
       e.preventDefault();
 
       if (!blobFoto) {
-        mostrarAlerta('Por favor toma la fotografía antes de registrar.', 'error');
+        alert('Por favor toma la fotografía antes de registrar.');
         return;
       }
 
       btnGuardar.disabled = true;
-      btnGuardar.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Procesando...';
+      btnGuardar.textContent = 'Procesando y Guardando...';
 
       const formData = new FormData();
       formData.append('nombre_completo', document.getElementById('nombre').value);
@@ -217,37 +245,30 @@
         const datos = await respuesta.json();
 
         if (respuesta.ok) {
-          mostrarAlerta(datos.mensaje || '¡Habitante registrado con éxito!', 'exito');
+          mensajeAlerta.style.backgroundColor = '#065f46';
+          mensajeAlerta.style.color = '#34d399';
+          mensajeAlerta.textContent = datos.mensaje || '¡Habitante registrado con éxito!';
+          mensajeAlerta.classList.remove('oculto');
           
           formRegistro.reset();
-          fotoPreview.classList.add('hidden');
-          placeholderCamara.classList.remove('hidden');
+          fotoPreview.classList.add('oculto');
+          placeholderCamara.classList.remove('oculto');
           btnGuardar.disabled = true;
-          btnGuardar.innerHTML = '<i class="fa-solid fa-user-check"></i> Registrar Acceso';
-          btnIniciarCamara.innerHTML = '<i class="fa-solid fa-video"></i> Iniciar';
+          btnGuardar.style.opacity = '0.5';
+          btnGuardar.textContent = 'Registrar Acceso';
           blobFoto = null;
         } else {
           throw new Error(datos.detail || 'Ocurrió un error al procesar el registro.');
         }
       } catch (err) {
-        mostrarAlerta(err.message, 'error');
+        mensajeAlerta.style.backgroundColor = '#991b1b';
+        mensajeAlerta.style.color = '#fca5a5';
+        mensajeAlerta.textContent = err.message;
+        mensajeAlerta.classList.remove('oculto');
         btnGuardar.disabled = false;
-        btnGuardar.innerHTML = '<i class="fa-solid fa-user-check"></i> Registrar Acceso';
+        btnGuardar.textContent = 'Registrar Acceso';
       }
     });
-
-    function mostrarAlerta(mensaje, tipo) {
-      mensajeAlerta.classList.remove('hidden', 'bg-accent/20', 'text-accent', 'bg-red-500/20', 'text-red-400', 'border-accent/30', 'border-red-500/30');
-      mensajeAlerta.classList.add('border');
-      
-      if (tipo === 'exito') {
-        mensajeAlerta.classList.add('bg-accent/20', 'text-accent', 'border-accent/30');
-        mensajeAlerta.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> ${mensaje}`;
-      } else {
-        mensajeAlerta.classList.add('bg-red-500/20', 'text-red-400', 'border-red-500/30');
-        mensajeAlerta.innerHTML = `<i class="fa-solid fa-circle-exclamation text-lg"></i> ${mensaje}`;
-      }
-    }
   });
 </script>
 {% endblock %}
